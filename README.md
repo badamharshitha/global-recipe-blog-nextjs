@@ -1,57 +1,59 @@
+
 # 🌍 Multi-Language Recipe Blog (Next.js)
 
 A modern, SEO-optimized, multi-language recipe blog built using **Next.js** with Static Site Generation (SSG), Internationalization (i18n), and dynamic routing.
 
-This project demonstrates performance optimization, localization, and search engine best practices for content-heavy websites.
+This project demonstrates performance optimization, localization strategies, and SEO best practices for content-heavy websites.
 
 ---
 
 ## 🚀 Features
 
-- 🌐 Internationalization (English, Spanish, French)
-- ⚡ Static Site Generation (SSG)
-- 🔄 Dynamic Routes (`/recipes/[slug]`)
-- 🔍 SEO Optimization (Meta tags + Open Graph)
-- 🗺️ Sitemap Generation (`sitemap.xml`)
-- 🐦 Social Sharing (Twitter Web Intent)
-- 🖼️ Optimized Images
-- 🐳 Docker-ready setup
-- 📦 Clean project structure
+* 🌐 Internationalization (English, Spanish, French)
+* ⚡ Static Site Generation (SSG)
+* 🔄 Dynamic Routes (`/recipes/[slug]`)
+* 🔍 SEO Optimization (Meta tags + Open Graph)
+* 🗺️ Sitemap Generation (`sitemap.xml`)
+* 🐦 Social Sharing (Twitter Web Intent)
+* 🖼️ Optimized Images
+* 🐳 Docker-ready setup
+* 📦 Clean and scalable project structure
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Skills Used
-- React
-- Next.js
-- Static Site Generation (SSG)
-- Internationalization (i18n)
-- SEO Optimization
-- Dynamic Routing
-- TypeScript
-- Git
+
+* React
+* Next.js
+* Static Site Generation (SSG)
+* Internationalization (i18n)
+* SEO Optimization
+* Dynamic Routing
+* TypeScript
+* Git Version Control
 
 ### Tools Used
-- Next.js
-- React
-- Node.js
-- npm
-- Git & GitHub
-- GitHub Codespaces
-- VS Code
+
+* Next.js
+* React
+* Node.js
+* npm
+* Git & GitHub
+* GitHub Codespaces
+* VS Code
 
 ---
 
 ## 📁 Project Structure
 
 ```
-
 recipe-blog/
 │
 ├── public/
 │   ├── sitemap.xml
-│   └── images
+│   └── images/
 │
 ├── scripts/
 │   └── generate-sitemap.js
@@ -68,7 +70,6 @@ recipe-blog/
 ├── next.config.js
 ├── package.json
 └── README.md
-
 ```
 
 ---
@@ -77,40 +78,38 @@ recipe-blog/
 
 The project supports:
 
-- 🇺🇸 English (default)
-- 🇪🇸 Spanish
-- 🇫🇷 French
+* 🇺🇸 English (default)
+* 🇪🇸 Spanish
+* 🇫🇷 French
 
-Locale-based routing:
-
-```
-
-/en/recipes/classic-spanish-paella
-/es/recipes/classic-spanish-paella
-/fr/recipes/classic-spanish-paella
+### Example Routes:
 
 ```
+/en/recipes/classic-spanish-paella  
+/es/recipes/classic-spanish-paella  
+/fr/recipes/classic-spanish-paella  
+```
 
-Language switching is handled using Next.js router with locale support.
+Language switching is handled using the Next.js router with built-in locale support.
 
 ---
 
 ## ⚡ Data Fetching Strategy
 
-- Used `getStaticProps` and `getStaticPaths`
-- Pages are statically generated at build time
-- Improves performance and SEO
-- Suitable for content-heavy sites like blogs
+* Used `getStaticProps` and `getStaticPaths`
+* Pages are statically generated at build time
+* Improves performance and SEO
+* Ideal for content-driven websites like blogs
 
 ---
 
 ## 🔎 SEO Strategy
 
-- Dynamic `<Head>` meta tags per recipe
-- Open Graph tags for social sharing
-- Automatically generated `sitemap.xml`
-- Clean URL structure
-- Optimized page rendering with SSG
+* Dynamic `<Head>` meta tags per recipe
+* Open Graph tags for better social sharing previews
+* Automatically generated `sitemap.xml`
+* Clean URL structure
+* Optimized rendering using SSG
 
 ---
 
@@ -119,25 +118,19 @@ Language switching is handled using Next.js router with locale support.
 Sitemap is generated using:
 
 ```
-
 npm run generate-sitemap
-
 ```
 
 It creates:
 
 ```
-
 /public/sitemap.xml
-
 ```
 
 Accessible at:
 
 ```
-
-[http://localhost:3000/sitemap.xml](http://localhost:3000/sitemap.xml)
-
+http://localhost:3000/sitemap.xml
 ```
 
 ---
@@ -147,25 +140,19 @@ Accessible at:
 ### 1️⃣ Install dependencies
 
 ```
-
 npm install
-
 ```
 
 ### 2️⃣ Run development server
 
 ```
-
 npm run dev
-
 ```
 
 Open:
 
 ```
-
-[http://localhost:3000](http://localhost:3000)
-
+http://localhost:3000
 ```
 
 ---
@@ -173,10 +160,8 @@ Open:
 ## 🏗️ Production Build
 
 ```
-
 npm run build
 npm start
-
 ```
 
 ---
@@ -186,55 +171,41 @@ npm start
 Run:
 
 ```
-
 docker-compose up --build
-
 ```
 
-Application runs on:
+Application runs at:
 
 ```
-
-[http://localhost:3000](http://localhost:3000)
-
+http://localhost:3000
 ```
 
 ---
 
 ## 📈 Performance Optimizations
 
-- Static Site Generation (SSG)
-- Reduced unnecessary dependencies
-- Optimized images
-- Lightweight components
-- Efficient routing
+* Static Site Generation (SSG)
+* Reduced unnecessary dependencies
+* Optimized image loading
+* Lightweight component structure
+* Efficient routing
 
 ---
 
 ## 🎯 Learning Outcomes
 
-- Implemented multi-language routing
-- Understood SSG vs SSR tradeoffs
-- Applied real-world SEO strategies
-- Generated sitemap for indexing
-- Built scalable dynamic routes
-- Improved performance optimization techniques
+* Implemented multi-language routing
+* Understood SSG vs SSR tradeoffs
+* Applied real-world SEO strategies
+* Generated sitemap for indexing
+* Built scalable dynamic routes
+* Improved performance optimization techniques
 
 ---
 
-## 👨‍💻 Author
-B.N.S. Harshitha
+## 👩‍💻 Author
+
+**B.N.S. Harshitha**
 
 ---
-
-## ✅ Status
-
-✔ i18n implemented  
-✔ Dynamic routes working  
-✔ SEO meta tags added  
-✔ Sitemap generated  
-✔ Production build successful  
-
-**Project Status: Completed 🎉**
-```
 
