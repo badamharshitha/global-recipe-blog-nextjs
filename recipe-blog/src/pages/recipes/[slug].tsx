@@ -1,130 +1,122 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type Recipe = {
   slug: string;
   title: string;
-  image: string;
   ingredients: string[];
   instructions: string;
+  image: string;
 };
 
-type Props = {
-  recipe: Recipe;
-};
+const recipes: Recipe[] = [
+  {
+    slug: "classic-spanish-paella",
+    title: "Classic Spanish Paella",
+    ingredients: ["Rice", "Seafood", "Saffron"],
+    instructions: "Cook rice with seafood and saffron.",
+    image: "/paella.jpg",
+  },
+  {
+    slug: "french-croissant",
+    title: "French Croissant",
+    ingredients: ["Flour", "Butter", "Yeast"],
+    instructions: "Layer dough with butter and bake.",
+    image: "/croissant.jpg",
+  },
+];
 
-export default function RecipePage({ recipe }: Props) {
+export default function RecipePage({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const currentUrl = `http://localhost:3000${router.asPath}`;
+  const { locale } = router;
+
+  if (!recipe) return <div>Recipe not found</div>;
+
+  // Simple UI translations
+  const translations: any = {
+    en: { ingredients: "Ingredients", instructions: "Instructions" },
+    es: { ingredients: "Ingredientes", instructions: "Instrucciones" },
+    fr: { ingredients: "Ingrédients", instructions: "Instructions" },
+  };
+
+  const t = translations[locale || "en"];
+
+  const currentUrl =
+    typeof window !== "undefined"
+      ? window.location.href
+      : `http://localhost:3000${router.asPath}`;
 
   return (
-    <>
-      <Head>
-        <title>{recipe.title}</title>
-        <meta name="description" content={recipe.instructions} />
-      </Head>
+    <div className="min-h-screen p-10">
 
-      <div className="p-10 max-w-3xl mx-auto">
-        <h1
-          data-testid="recipe-title"
-          className="text-4xl font-bold mb-6"
-        >
-          {recipe.title}
-        </h1>
+      <LanguageSwitcher />
 
-        <div className="mb-6">
-          <Image
-            src={`/${recipe.image}`}
-            alt={recipe.title}
-            width={800}
-            height={500}
-            className="rounded"
-          />
-        </div>
+      <h1 data-testid="recipe-title" className="text-4xl font-bold mb-6">
+        {recipe.title}
+      </h1>
 
-        <h2 className="text-2xl font-semibold mb-3">
-          Ingredients
-        </h2>
+      <Image
+        src={recipe.image}
+        alt={recipe.title}
+        width={800}
+        height={500}
+        className="rounded mb-6"
+      />
 
-        <ul
-          data-testid="recipe-ingredients"
-          className="mb-6 list-disc pl-6"
-        >
-          {recipe.ingredients.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+      <h2 data-testid="ingredients-heading" className="text-2xl font-semibold mb-2">
+        {t.ingredients}
+      </h2>
 
-        <h2 className="text-2xl font-semibold mb-3">
-          Instructions
-        </h2>
+      <ul data-testid="recipe-ingredients" className="list-disc pl-6 mb-6">
+        {recipe.ingredients.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
 
-        <div data-testid="recipe-instructions">
-          {recipe.instructions}
-        </div>
+      <h2 className="text-2xl font-semibold mb-2">
+        {t.instructions}
+      </h2>
 
-        {/* Twitter Share */}
-        <div className="mt-6">
-          <a
-            data-testid="social-share-twitter"
-            href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-              currentUrl
-            )}&text=${encodeURIComponent(recipe.title)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 underline"
-          >
-            Share on Twitter
-          </a>
-        </div>
+      <div data-testid="recipe-instructions" className="mb-6">
+        {recipe.instructions}
       </div>
-    </>
+
+      <a
+        data-testid="social-share-twitter"
+        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+          currentUrl
+        )}&text=${encodeURIComponent(recipe.title)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Share on Twitter
+      </a>
+    </div>
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const recipes = [
-    { slug: "classic-spanish-paella" },
-    { slug: "french-croissant" },
-  ];
+export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
+  const paths: any[] = [];
 
-  return {
-    paths: recipes.map((recipe) => ({
-      params: { slug: recipe.slug },
-    })),
-    fallback: false,
-  };
+  recipes.forEach((recipe) => {
+    locales?.forEach((locale) => {
+      paths.push({
+        params: { slug: recipe.slug },
+        locale,
+      });
+    });
+  });
+
+  return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const recipes: Recipe[] = [
-    {
-      slug: "classic-spanish-paella",
-      title: "Classic Spanish Paella",
-      image: "paella.jpg",
-      ingredients: ["Rice", "Seafood", "Saffron"],
-      instructions: "Cook rice with seafood and saffron.",
-    },
-    {
-      slug: "french-croissant",
-      title: "French Croissant",
-      image: "croissant.jpg",
-      ingredients: ["Flour", "Butter", "Yeast"],
-      instructions: "Layer dough with butter and bake.",
-    },
-  ];
+  const recipe = recipes.find(r => r.slug === params?.slug);
 
-  const recipe = recipes.find((r) => r.slug === params?.slug);
+  if (!recipe) return { notFound: true };
 
-  if (!recipe) {
-    return { notFound: true };
-  }
-
-  return {
-    props: {
-      recipe,
-    },
-  };
+  return { props: { recipe } };
 };
