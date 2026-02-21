@@ -1,16 +1,40 @@
 const fs = require("fs");
-const baseUrl = "http://localhost:3000";
+const path = require("path");
 
-const urls = `
-<url><loc>${baseUrl}</loc></url>
-<url><loc>${baseUrl}/recipes</loc></url>
-<url><loc>${baseUrl}/recipes/classic-spanish-paella</loc></url>
-<url><loc>${baseUrl}/recipes/french-croissant</loc></url>
-`;
+const baseUrl = "https://your-domain.com"; // change later to real domain
 
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
-</urlset>`;
+const locales = ["en", "es", "fr"];
 
-fs.writeFileSync("./public/sitemap.xml", sitemap);
+const slugs = [
+  "classic-spanish-paella",
+  "french-croissant"
+];
+
+let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+sitemap += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+// Add homepage
+locales.forEach((locale) => {
+  sitemap += `
+  <url>
+    <loc>${baseUrl}/${locale}</loc>
+  </url>`;
+});
+
+// Add recipe pages
+slugs.forEach((slug) => {
+  locales.forEach((locale) => {
+    sitemap += `
+  <url>
+    <loc>${baseUrl}/${locale}/recipes/${slug}</loc>
+  </url>`;
+  });
+});
+
+sitemap += `\n</urlset>`;
+
+const filePath = path.join(__dirname, "../public/sitemap.xml");
+
+fs.writeFileSync(filePath, sitemap);
+
+console.log("✅ Sitemap generated successfully!");

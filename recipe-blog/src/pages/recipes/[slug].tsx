@@ -1,100 +1,78 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import Image from "next/image";
+import Head from "next/head";
 import { useRouter } from "next/router";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { recipes } from "../../data/recipes"; // ✅ named import
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
-type Recipe = {
+interface Recipe {
   slug: string;
   title: string;
+  image: string;
   ingredients: string[];
   instructions: string;
-  image: string;
-};
+}
 
-const recipes: Recipe[] = [
-  {
-    slug: "classic-spanish-paella",
-    title: "Classic Spanish Paella",
-    ingredients: ["Rice", "Seafood", "Saffron"],
-    instructions: "Cook rice with seafood and saffron.",
-    image: "/paella.jpg",
-  },
-  {
-    slug: "french-croissant",
-    title: "French Croissant",
-    ingredients: ["Flour", "Butter", "Yeast"],
-    instructions: "Layer dough with butter and bake.",
-    image: "/croissant.jpg",
-  },
-];
+interface Props {
+  recipe: Recipe;
+}
 
-export default function RecipePage({ recipe }: { recipe: Recipe }) {
+export default function RecipePage({ recipe }: Props) {
   const router = useRouter();
   const { locale } = router;
 
   if (!recipe) return <div>Recipe not found</div>;
 
-  // Simple UI translations
-  const translations: any = {
-    en: { ingredients: "Ingredients", instructions: "Instructions" },
-    es: { ingredients: "Ingredientes", instructions: "Instrucciones" },
-    fr: { ingredients: "Ingrédients", instructions: "Instructions" },
-  };
-
-  const t = translations[locale || "en"];
-
-  const currentUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : `http://localhost:3000${router.asPath}`;
+  const pageUrl = `https://your-domain.com/${locale}/recipes/${recipe.slug}`;
 
   return (
-    <div className="min-h-screen p-10">
+    <>
+      <Head>
+        <title>{recipe.title}</title>
+        <meta name="description" content={recipe.instructions} />
+      </Head>
 
       <LanguageSwitcher />
 
-      <h1 data-testid="recipe-title" className="text-4xl font-bold mb-6">
-        {recipe.title}
-      </h1>
+      <h1>{recipe.title}</h1>
 
-      <Image
+      <img
         src={recipe.image}
         alt={recipe.title}
-        width={800}
-        height={500}
-        className="rounded mb-6"
+        width="600"
       />
 
-      <h2 data-testid="ingredients-heading" className="text-2xl font-semibold mb-2">
-        {t.ingredients}
+      <h2>
+        {locale === "es"
+          ? "Ingredientes"
+          : locale === "fr"
+          ? "Ingrédients"
+          : "Ingredients"}
       </h2>
 
-      <ul data-testid="recipe-ingredients" className="list-disc pl-6 mb-6">
+      <ul>
         {recipe.ingredients.map((item, index) => (
           <li key={index}>{item}</li>
         ))}
       </ul>
 
-      <h2 className="text-2xl font-semibold mb-2">
-        {t.instructions}
+      <h2>
+        {locale === "es"
+          ? "Instrucciones"
+          : locale === "fr"
+          ? "Instructions"
+          : "Instructions"}
       </h2>
 
-      <div data-testid="recipe-instructions" className="mb-6">
-        {recipe.instructions}
-      </div>
+      <p>{recipe.instructions}</p>
 
       <a
-        data-testid="social-share-twitter"
-        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-          currentUrl
-        )}&text=${encodeURIComponent(recipe.title)}`}
+        href={`https://twitter.com/intent/tweet?text=${recipe.title}&url=${pageUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="bg-blue-500 text-white px-4 py-2 rounded"
       >
         Share on Twitter
       </a>
-    </div>
+    </>
   );
 }
 
@@ -110,13 +88,20 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
     });
   });
 
-  return { paths, fallback: false };
+  return {
+    paths,
+    fallback: false,
+  };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const recipe = recipes.find(r => r.slug === params?.slug);
+  const recipe = recipes.find(
+    (r) => r.slug === params?.slug
+  );
 
-  if (!recipe) return { notFound: true };
-
-  return { props: { recipe } };
+  return {
+    props: {
+      recipe,
+    },
+  };
 };
