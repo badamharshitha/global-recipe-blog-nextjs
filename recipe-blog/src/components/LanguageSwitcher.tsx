@@ -2,20 +2,19 @@ import { useRouter } from "next/router";
 
 export default function LanguageSwitcher() {
   const router = useRouter();
-
-  const changeLanguage = (locale: string) => {
-    router.push(router.asPath, router.asPath, { locale });
-  };
+  const { pathname, asPath, query } = router;
 
   return (
-    <div data-testid="language-switcher" style={{ marginBottom: "20px" }}>
-      <button onClick={() => changeLanguage("en")} style={{ marginRight: "10px" }}>
+    <div data-testid="language-switcher">
+      <button onClick={() => router.push({ pathname, query }, asPath, { locale: "en" })}>
         EN
       </button>
-      <button onClick={() => changeLanguage("es")} style={{ marginRight: "10px" }}>
+
+      <button onClick={() => router.push({ pathname, query }, asPath, { locale: "es" })}>
         ES
       </button>
-      <button onClick={() => changeLanguage("fr")}>
+
+      <button onClick={() => router.push({ pathname, query }, asPath, { locale: "fr" })}>
         FR
       </button>
     </div>

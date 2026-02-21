@@ -1,76 +1,50 @@
 import { useState } from "react";
+import { recipes } from "../../data/recipes";
 import Link from "next/link";
-import Image from "next/image";
-
-const recipesData = [
-  {
-    slug: "classic-spanish-paella",
-    title: "Classic Spanish Paella",
-    category: "Spanish",
-    image: "/paella.jpg",
-  },
-  {
-    slug: "french-croissant",
-    title: "French Croissant",
-    category: "French",
-    image: "/croissant.jpg",
-  },
-];
 
 export default function RecipesPage() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("all");
 
-  const filteredRecipes = recipesData.filter((recipe) => {
-    return (
-      recipe.title.toLowerCase().includes(search.toLowerCase()) &&
-      (category === "" || recipe.category === category)
-    );
+  const filtered = recipes.filter((recipe) => {
+    const matchesSearch = recipe.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCategory =
+      category === "all" || recipe.slug.includes(category);
+
+    return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="min-h-screen p-10">
-      <h1 className="text-3xl font-bold mb-6">All Recipes</h1>
+    <div>
+      <h1>All Recipes</h1>
 
-      {/* Search Input */}
       <input
         data-testid="search-input"
-        type="text"
-        placeholder="Search recipes..."
-        className="border p-2 mr-4"
+        placeholder="Search..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* Category Filter */}
       <select
         data-testid="category-filter"
-        className="border p-2"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
       >
-        <option value="">All Categories</option>
-        <option value="Spanish">Spanish</option>
-        <option value="French">French</option>
+        <option value="all">All</option>
+        <option value="paella">Paella</option>
+        <option value="croissant">Croissant</option>
       </select>
 
-      {/* Recipe List */}
-      <div className="mt-8 grid gap-6">
-        {filteredRecipes.map((recipe) => (
-          <Link key={recipe.slug} href={`/recipes/${recipe.slug}`}>
-            <div
-              data-testid="recipe-card"
-              className="border p-4 rounded cursor-pointer"
-            >
-              <Image
-                src={recipe.image}
-                alt={recipe.title}
-                width={600}
-                height={400}
-              />
-              <h2 className="text-xl mt-2">{recipe.title}</h2>
-            </div>
-          </Link>
+      <div>
+        {filtered.map((recipe) => (
+          <div key={recipe.slug} data-testid="recipe-card">
+            <Link href={`/recipes/${recipe.slug}`}>
+              {recipe.title}
+            </Link>
+          </div>
         ))}
       </div>
     </div>

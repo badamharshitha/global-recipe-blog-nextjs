@@ -2,18 +2,14 @@ import { useState } from "react";
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
-  const validateEmail = (value: string) => {
-    return /\S+@\S+\.\S+/.test(value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
 
-    if (!validateEmail(email)) {
-      setError("Invalid email address");
+    if (!email.includes("@")) {
+      setError("Invalid email");
       return;
     }
 
@@ -22,43 +18,21 @@ export default function NewsletterForm() {
   };
 
   if (success) {
-    return (
-      <div data-testid="newsletter-success">
-        Successfully subscribed!
-      </div>
-    );
+    return <div data-testid="newsletter-success">Subscribed!</div>;
   }
 
   return (
-    <form
-      data-testid="newsletter-form"
-      onSubmit={handleSubmit}
-      className="mt-10"
-    >
+    <form data-testid="newsletter-form" onSubmit={handleSubmit}>
       <input
         data-testid="newsletter-email"
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 mr-2"
-        placeholder="Enter email"
       />
-
-      <button
-        data-testid="newsletter-submit"
-        type="submit"
-        className="bg-black text-white px-4 py-2"
-      >
-        Subscribe
-      </button>
+      <button data-testid="newsletter-submit">Subscribe</button>
 
       {error && (
-        <div
-          data-testid="newsletter-error"
-          className="text-red-500 mt-2"
-        >
-          {error}
-        </div>
+        <div data-testid="newsletter-error">{error}</div>
       )}
     </form>
   );
