@@ -1,47 +1,25 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import Head from "next/head";
 import Image from "next/image";
-import { recipes } from "../../data/recipes";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { recipes } from "../../data/recipes";
 
-interface Recipe {
-  slug: string;
-  title: string;
-  image: string;
-  ingredients: string[];
-  instructions: string;
-}
-
-interface Props {
-  recipe: Recipe;
-}
-
-export default function RecipePage({ recipe }: Props) {
+export default function RecipePage({ recipe }: any) {
   const router = useRouter();
-  const { locale } = router;
 
-  if (!recipe) return <div>Recipe not found</div>;
+  if (!recipe) return <div>Not found</div>;
 
-  const pageUrl = `http://localhost:3000/${locale}/recipes/${recipe.slug}`;
+  const url = `http://localhost:3000${router.asPath}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+    url
+  )}&text=${encodeURIComponent(recipe.title)}`;
 
   return (
-    <>
-      {/* ✅ SEO */}
-      <Head>
-        <title>{recipe.title}</title>
-        <meta name="description" content={recipe.instructions} />
-        <meta property="og:title" content={recipe.title} />
-        <meta property="og:description" content={recipe.instructions} />
-        <meta property="og:url" content={pageUrl} />
-      </Head>
-
+    <div>
       <LanguageSwitcher />
 
-      {/* ✅ Title */}
       <h1 data-testid="recipe-title">{recipe.title}</h1>
 
-      {/* ✅ Optimized Image */}
       <Image
         src={recipe.image}
         alt={recipe.title}
@@ -49,66 +27,37 @@ export default function RecipePage({ recipe }: Props) {
         height={400}
       />
 
-      {/* ✅ Ingredients */}
-      <h2 data-testid="ingredients-heading">
-        {locale === "es"
-          ? "Ingredientes"
-          : locale === "fr"
-          ? "Ingrédients"
-          : "Ingredients"}
-      </h2>
-
+      <h2 data-testid="ingredients-heading">Ingredients</h2>
       <ul data-testid="recipe-ingredients">
-        {recipe.ingredients.map((item, index) => (
+        {recipe.ingredients.map((item: string, index: number) => (
           <li key={index}>{item}</li>
         ))}
       </ul>
 
-      {/* ✅ Instructions */}
-      <h2>
-        {locale === "es"
-          ? "Instrucciones"
-          : locale === "fr"
-          ? "Instructions"
-          : "Instructions"}
-      </h2>
+      <h2>Instructions</h2>
+      <p data-testid="recipe-instructions">{recipe.instructions}</p>
 
-      <p data-testid="recipe-instructions">
-        {recipe.instructions}
-      </p>
-
-      {/* ✅ Twitter Share */}
       <a
-        data-testid="social-share-twitter"
-        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-          pageUrl
-        )}&text=${encodeURIComponent(recipe.title)}`}
+        href={twitterUrl}
         target="_blank"
         rel="noopener noreferrer"
+        data-testid="social-share-twitter"
       >
         Share on Twitter
       </a>
 
-      {/* Example Comments Section (for print hide requirement) */}
       <div data-testid="comments-list">
         <h3>Comments</h3>
         <p>No comments yet.</p>
       </div>
-    </>
+    </div>
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
-  const paths: any[] = [];
-
-  recipes.forEach((recipe) => {
-    locales?.forEach((locale) => {
-      paths.push({
-        params: { slug: recipe.slug },
-        locale,
-      });
-    });
-  });
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths = recipes.map((recipe) => ({
+    params: { slug: recipe.slug },
+  }));
 
   return {
     paths,
@@ -117,17 +66,13 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const recipe = recipes.find(
-    (r) => r.slug === params?.slug
-  );
+  const recipe = recipes.find((r) => r.slug === params?.slug);
 
   if (!recipe) {
     return { notFound: true };
   }
 
   return {
-    props: {
-      recipe,
-    },
+    props: { recipe },
   };
 };

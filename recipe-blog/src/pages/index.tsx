@@ -5,7 +5,21 @@ import LanguageSwitcher from "../components/LanguageSwitcher";
 import NewsletterForm from "../components/NewsletterForm";
 import { recipes } from "../data/recipes";
 
-export default function Home({ featured }: any) {
+interface Recipe {
+  slug: string;
+  title: string;
+  image: string;
+  ingredients: string[];
+  instructions: string;
+  category: string;
+  isFeatured: boolean;
+}
+
+interface HomeProps {
+  featured: Recipe[];
+}
+
+export default function Home({ featured }: HomeProps) {
   return (
     <div>
       <LanguageSwitcher />
@@ -13,10 +27,10 @@ export default function Home({ featured }: any) {
       <h1>Featured Recipes</h1>
 
       <div data-testid="featured-recipes">
-        {featured.map((recipe: any) => (
+        {featured.map((recipe) => (
           <div key={recipe.slug} data-testid="recipe-card">
             <Link href={`/recipes/${recipe.slug}`}>
-              <h3>{recipe.title}</h3>
+              <h2>{recipe.title}</h2>
             </Link>
 
             <Image
@@ -24,6 +38,7 @@ export default function Home({ featured }: any) {
               alt={recipe.title}
               width={500}
               height={300}
+              priority
             />
           </div>
         ))}
@@ -35,8 +50,8 @@ export default function Home({ featured }: any) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
+  const featured = recipes.filter((recipe) => recipe.isFeatured);
 
-const featured = recipes;
   return {
     props: {
       featured,

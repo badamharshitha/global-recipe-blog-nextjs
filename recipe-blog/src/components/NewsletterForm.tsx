@@ -10,6 +10,7 @@ export default function NewsletterForm() {
 
     if (!email.includes("@")) {
       setError("Invalid email");
+      setSuccess(false);
       return;
     }
 
@@ -18,22 +19,22 @@ export default function NewsletterForm() {
   };
 
   if (success) {
-    return <div data-testid="newsletter-success">Subscribed!</div>;
+    return <p data-testid="newsletter-success">Subscribed successfully!</p>;
   }
 
   return (
-    <form data-testid="newsletter-form" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} data-testid="newsletter-form">
       <input
         data-testid="newsletter-email"
-        type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <button data-testid="newsletter-submit">Subscribe</button>
 
-      {error && (
-        <div data-testid="newsletter-error">{error}</div>
-      )}
+      <button data-testid="newsletter-submit" type="submit">
+        Subscribe
+      </button>
+
+      {error && <p data-testid="newsletter-error">{error}</p>}
     </form>
   );
 }

@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { recipes } from "../../data/recipes";
 import Link from "next/link";
+import Image from "next/image";
+import { recipes } from "../../data/recipes";
 
 export default function RecipesPage() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState("");
 
   const filtered = recipes.filter((recipe) => {
     const matchesSearch = recipe.title
       .toLowerCase()
       .includes(search.toLowerCase());
 
-    const matchesCategory =
-      category === "all" || recipe.slug.includes(category);
+    const matchesCategory = category
+      ? recipe.category === category
+      : true;
 
     return matchesSearch && matchesCategory;
   });
@@ -33,20 +35,24 @@ export default function RecipesPage() {
         value={category}
         onChange={(e) => setCategory(e.target.value)}
       >
-        <option value="all">All</option>
-        <option value="paella">Paella</option>
-        <option value="croissant">Croissant</option>
+        <option value="">All</option>
+        <option value="Spanish">Spanish</option>
+        <option value="French">French</option>
       </select>
 
-      <div>
-        {filtered.map((recipe) => (
-          <div key={recipe.slug} data-testid="recipe-card">
-            <Link href={`/recipes/${recipe.slug}`}>
-              {recipe.title}
-            </Link>
-          </div>
-        ))}
-      </div>
+      {filtered.map((recipe) => (
+        <div key={recipe.slug} data-testid="recipe-card">
+          <Link href={`/recipes/${recipe.slug}`}>
+            <h2>{recipe.title}</h2>
+          </Link>
+          <Image
+            src={recipe.image}
+            alt={recipe.title}
+            width={400}
+            height={250}
+          />
+        </div>
+      ))}
     </div>
   );
 }
