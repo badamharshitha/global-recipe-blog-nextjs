@@ -1,55 +1,41 @@
 import { GetStaticPaths, GetStaticProps } from "next";
-import { useRouter } from "next/router";
 import Image from "next/image";
-import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { useRouter } from "next/router";
 import { recipes } from "../../data/recipes";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function RecipePage({ recipe }: any) {
-  const router = useRouter();
+  const { locale } = useRouter();
 
   if (!recipe) return <div>Not found</div>;
 
-  const url = `http://localhost:3000${router.asPath}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-    url
-  )}&text=${encodeURIComponent(recipe.title)}`;
+  const title = recipe.title[locale as keyof typeof recipe.title];
+  const ingredients = recipe.ingredients[locale as keyof typeof recipe.ingredients];
+  const instructions = recipe.instructions[locale as keyof typeof recipe.instructions];
+
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}`;
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <LanguageSwitcher />
 
-      <h1 data-testid="recipe-title">{recipe.title}</h1>
+      <h1>{title}</h1>
 
-      <Image
-        src={recipe.image}
-        alt={recipe.title}
-        width={600}
-        height={400}
-      />
+      <Image src={recipe.image} alt="recipe" width={500} height={300} />
 
-      <h2 data-testid="ingredients-heading">Ingredients</h2>
-      <ul data-testid="recipe-ingredients">
-        {recipe.ingredients.map((item: string, index: number) => (
-          <li key={index}>{item}</li>
+      <h2>Ingredients</h2>
+      <ul>
+        {ingredients.map((item: string, i: number) => (
+          <li key={i}>{item}</li>
         ))}
       </ul>
 
       <h2>Instructions</h2>
-      <p data-testid="recipe-instructions">{recipe.instructions}</p>
+      <p>{instructions}</p>
 
-      <a
-        href={twitterUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-testid="social-share-twitter"
-      >
+      <a href={twitterUrl} target="_blank">
         Share on Twitter
       </a>
-
-      <div data-testid="comments-list">
-        <h3>Comments</h3>
-        <p>No comments yet.</p>
-      </div>
     </div>
   );
 }
@@ -59,20 +45,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
     params: { slug: recipe.slug },
   }));
 
-  return {
-    paths,
-    fallback: false,
-  };
+  return { paths, fallback: false };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const recipe = recipes.find((r) => r.slug === params?.slug);
-
-  if (!recipe) {
-    return { notFound: true };
-  }
-
-  return {
-    props: { recipe },
-  };
+  return { props: { recipe } };
 };

@@ -1,48 +1,35 @@
 import { GetStaticProps } from "next";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { recipes } from "../data/recipes";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import NewsletterForm from "../components/NewsletterForm";
-import { recipes } from "../data/recipes";
 
-interface Recipe {
-  slug: string;
-  title: string;
-  image: string;
-  ingredients: string[];
-  instructions: string;
-  category: string;
-  isFeatured: boolean;
-}
+export default function Home({ featured }: any) {
+  const { locale } = useRouter();
 
-interface HomeProps {
-  featured: Recipe[];
-}
-
-export default function Home({ featured }: HomeProps) {
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <LanguageSwitcher />
-
       <h1>Featured Recipes</h1>
 
-      <div data-testid="featured-recipes">
-        {featured.map((recipe) => (
-          <div key={recipe.slug} data-testid="recipe-card">
-            <Link href={`/recipes/${recipe.slug}`}>
-              <h2>{recipe.title}</h2>
-            </Link>
+      {featured.map((recipe: any) => (
+        <div key={recipe.slug} style={{ marginBottom: 40 }}>
+          <Link href={`/recipes/${recipe.slug}`}>
+            <h2>
+              {recipe.title[locale as keyof typeof recipe.title]}
+            </h2>
+          </Link>
 
-            <Image
-              src={recipe.image}
-              alt={recipe.title}
-              width={500}
-              height={300}
-              priority
-            />
-          </div>
-        ))}
-      </div>
+          <Image
+            src={recipe.image}
+            alt="recipe"
+            width={400}
+            height={250}
+          />
+        </div>
+      ))}
 
       <NewsletterForm />
     </div>
@@ -50,11 +37,6 @@ export default function Home({ featured }: HomeProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const featured = recipes.filter((recipe) => recipe.isFeatured);
-
-  return {
-    props: {
-      featured,
-    },
-  };
+  const featured = recipes.filter((r) => r.featured);
+  return { props: { featured } };
 };

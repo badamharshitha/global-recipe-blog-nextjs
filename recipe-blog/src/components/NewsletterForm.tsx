@@ -7,34 +7,27 @@ export default function NewsletterForm() {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
     if (!email.includes("@")) {
       setError("Invalid email");
-      setSuccess(false);
       return;
     }
-
     setError("");
     setSuccess(true);
   };
 
   if (success) {
-    return <p data-testid="newsletter-success">Subscribed successfully!</p>;
+    return <p>Subscribed!</p>;
   }
 
   return (
-    <form onSubmit={handleSubmit} data-testid="newsletter-form">
+    <form onSubmit={handleSubmit}>
       <input
-        data-testid="newsletter-email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter email"
       />
-
-      <button data-testid="newsletter-submit" type="submit">
-        Subscribe
-      </button>
-
-      {error && <p data-testid="newsletter-error">{error}</p>}
+      <button>Subscribe</button>
+      {error && <p>{error}</p>}
     </form>
   );
 }
