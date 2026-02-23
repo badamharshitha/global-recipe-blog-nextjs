@@ -40,13 +40,71 @@ export default function RecipePage({ recipe }: any) {
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = recipes.map((recipe) => ({
-    params: { slug: recipe.slug },
-  }));
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const paths = recipes.map((recipe) => ({
+//     params: { slug: recipe.slug },
+//   }));
 
-  return { paths, fallback: false };
+//   return { paths, fallback: false };
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
+  const paths: any[] = [];
+
+  recipes.forEach((recipe) => {
+    locales?.forEach((locale) => {
+      paths.push({
+        params: { slug: recipe.slug },
+        locale,
+      });
+    });
+  });
+
+  return {
+    paths,
+    fallback: false,
+  };
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const recipe = recipes.find((r) => r.slug === params?.slug);
